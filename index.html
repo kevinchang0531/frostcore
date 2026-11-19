@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0b1a2e">
+  <title>霜核戰域 Frostcore</title>
+  <style>
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #0b1a2e; touch-action: none; }
+    #unity-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; display: block; background: #0b1a2e; outline: none; }
+    #loader { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+      color: #bfe9ff; font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif; background: radial-gradient(circle at 50% 40%, #1d4e7a, #0b1a2e); }
+    #loader h1 { margin: 0; font-size: clamp(32px, 8vw, 64px); letter-spacing: 6px; text-shadow: 3px 3px 0 #000; }
+    #loader p { margin: 0; color: #cfe6ff; font-size: 16px; }
+    #bar { width: min(70vw, 420px); height: 12px; border-radius: 6px; background: rgba(255,255,255,.15); overflow: hidden; }
+    #fill { width: 0; height: 100%; background: linear-gradient(90deg, #4fc3ff, #bfe9ff); transition: width .2s; }
+    #err { color: #ff8a80; max-width: 80vw; text-align: center; }
+  </style>
+</head>
+<body>
+  <canvas id="unity-canvas" tabindex="-1"></canvas>
+  <div id="loader">
+    <h1>霜核戰域</h1>
+    <p>FROSTCORE ── 載入中…</p>
+    <div id="bar"><div id="fill"></div></div>
+    <p id="err"></p>
+  </div>
+  <script>
+    var canvas = document.getElementById("unity-canvas");
+    var buildUrl = "Build";
+    var config = {
+      dataUrl: buildUrl + "/Web.data",
+      frameworkUrl: buildUrl + "/Web.framework.js",
+      codeUrl: buildUrl + "/Web.wasm",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "KevinChang",
+      productName: "霜核戰域 Frostcore",
+      productVersion: "1.0",
+      matchWebGLToCanvasSize: true,
+      devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+    };
+    var script = document.createElement("script");
+    script.src = buildUrl + "/Web.loader.js";
+    script.onload = function () {
+      createUnityInstance(canvas, config, function (p) {
+        document.getElementById("fill").style.width = (p * 100) + "%";
+      }).then(function () {
+        document.getElementById("loader").style.display = "none";
+        canvas.focus();
+      }).catch(function (m) {
+        document.getElementById("err").textContent = "載入失敗：" + m;
+      });
+    };
+    document.body.appendChild(script);
+    // 防止手機上拖曳時捲動頁面或長按跳出選單
+    document.addEventListener("touchmove", function (e) { e.preventDefault(); }, { passive: false });
+    document.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+  </script>
+</body>
+</html>
